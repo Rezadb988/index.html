@@ -3,324 +3,766 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>یادگیری انگلیسی با Alex</title>
+<title>داشبورد کریپتو</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --bg: #0f1117; --surface: #1a1d27; --card: #21253a;
-    --accent: #6c8fff; --accent2: #a78bfa; --text: #e8eaf6;
-    --muted: #8b90b0; --user-bubble: #1e3a5f; --ai-bubble: #1e2235;
-    --border: #2a2f4a; --error: #ff6b6b; --success: #69db7c;
+    --bg: #080b12;
+    --surface: #0e1420;
+    --card: #111827;
+    --border: #1e2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --green: #00e676;
+    --red: #ff1744;
+    --orange: #ff9100;
+    --yellow: #ffd600;
+    --text: #e2e8f0;
+    --muted: #4a5568;
+    --muted2: #718096;
   }
-  body { font-family: 'Vazirmatn', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
-  header { padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-  .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-  .header-info h1 { font-size: 15px; font-weight: 700; }
-  .header-info p { font-size: 12px; color: var(--muted); }
-  .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-left: 5px; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-  #setup-screen { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
-  .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; max-width: 420px; width: 100%; }
-  .setup-card h2 { font-size: 20px; font-weight: 700; margin-bottom: 6px; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-  .setup-card > p { font-size: 13px; color: var(--muted); margin-bottom: 22px; line-height: 1.7; }
-  .field-label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
-  .api-section { margin-bottom: 18px; }
-  input[type="text"] { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif; direction: ltr; text-align: left; outline: none; transition: border-color 0.2s; }
-  input[type="text"]:focus { border-color: var(--accent); }
-  input[type="text"]::placeholder { color: var(--muted); }
-  .api-note { font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
-  .level-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 18px; }
-  .opt-btn { padding: 10px 6px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'Vazirmatn', sans-serif; text-align: center; line-height: 1.5; }
-  .opt-btn.active-level { border-color: var(--accent); color: var(--accent); background: rgba(108,143,255,0.08); }
-  .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px; }
-  .style-opt { padding: 12px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'Vazirmatn', sans-serif; text-align: center; line-height: 1.6; }
-  .style-opt .icon { font-size: 18px; display: block; margin-bottom: 4px; }
-  .style-opt.active-style { border-color: var(--accent2); color: var(--accent2); background: rgba(167,139,250,0.08); }
-  .start-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Vazirmatn', sans-serif; transition: opacity 0.2s, transform 0.1s; }
-  .start-btn:hover { opacity: 0.9; }
-  .start-btn:active { transform: scale(0.98); }
-  #chat-screen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
-  #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
-  #messages::-webkit-scrollbar { width: 4px; }
-  #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-  .msg { display: flex; gap: 10px; max-width: 90%; animation: fadeUp 0.25s ease; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .msg.ai { align-self: flex-start; direction: ltr; }
-  .msg.user { align-self: flex-end; flex-direction: row-reverse; direction: ltr; }
-  .msg-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-  .msg.ai .msg-avatar { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
-  .msg.user .msg-avatar { background: var(--card); border: 1px solid var(--border); }
-  .msg-content { display: flex; flex-direction: column; gap: 4px; }
-  .bubble { padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.65; font-family: 'Inter', sans-serif; direction: ltr; text-align: left; }
-  .msg.ai .bubble { background: var(--ai-bubble); border: 1px solid var(--border); border-top-left-radius: 4px; }
-  .msg.user .bubble { background: var(--user-bubble); border-top-right-radius: 4px; }
-  .translation { background: rgba(108,143,255,0.07); border: 1px solid rgba(108,143,255,0.2); border-radius: 10px; padding: 8px 12px; font-size: 12px; color: #a0aacc; font-family: 'Vazirmatn', sans-serif; direction: rtl; text-align: right; line-height: 1.6; }
-  .translation::before { content: '🇮🇷 ترجمه: '; font-weight: 600; color: var(--accent); }
-  .correction { background: rgba(255,107,107,0.07); border: 1px solid rgba(255,107,107,0.2); border-radius: 10px; padding: 9px 12px; font-size: 12px; color: #ffb3b3; font-family: 'Vazirmatn', sans-serif; direction: rtl; text-align: right; line-height: 1.7; }
-  .msg-time { font-size: 10px; color: var(--muted); padding: 0 4px; font-family: 'Inter', sans-serif; }
-  .typing-indicator { display: flex; gap: 4px; padding: 12px 14px; background: var(--ai-bubble); border: 1px solid var(--border); border-radius: 16px; border-top-left-radius: 4px; width: fit-content; }
-  .typing-indicator span { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; animation: bounce 1.2s infinite; }
-  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
-  .hints { display: flex; gap: 6px; flex-wrap: wrap; padding: 0 14px 8px; flex-shrink: 0; direction: ltr; }
-  .hint-chip { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
-  .hint-chip:hover { border-color: var(--accent); color: var(--accent); }
-  #input-area { padding: 10px 14px 14px; background: var(--surface); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; direction: ltr; }
-  #user-input { flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 14px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif; outline: none; resize: none; max-height: 120px; overflow-y: auto; line-height: 1.5; transition: border-color 0.2s; direction: ltr; text-align: left; }
-  #user-input:focus { border-color: var(--accent); }
-  #user-input::placeholder { color: var(--muted); }
-  #send-btn { width: 44px; height: 44px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.2s, transform 0.1s; }
-  #send-btn:hover { opacity: 0.9; }
-  #send-btn:active { transform: scale(0.95); }
-  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--error); color: white; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; z-index: 100; font-family: 'Vazirmatn', sans-serif; white-space: nowrap; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  /* Header */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .logo h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+  }
+
+  .logo p {
+    font-size: 11px;
+    color: var(--muted2);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 230, 118, 0.1);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  .countdown {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted2);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 10px;
+  }
+
+  /* Main */
+  main { padding: 20px; max-width: 1400px; margin: 0 auto; }
+
+  /* Settings Panel */
+  .settings-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .settings-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .settings-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  .setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .setting-group label {
+    font-size: 11px;
+    color: var(--muted2);
+    font-weight: 600;
+  }
+
+  .setting-group input {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    direction: ltr;
+    outline: none;
+    width: 140px;
+    transition: border-color 0.2s;
+  }
+
+  .setting-group input:focus { border-color: var(--accent); }
+
+  .add-btn {
+    padding: 8px 18px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Vazirmatn', sans-serif;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+
+  .add-btn:hover { opacity: 0.85; }
+
+  .symbols-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .symbol-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .symbol-tag button {
+    background: none;
+    border: none;
+    color: var(--muted2);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s;
+  }
+
+  .symbol-tag button:hover { color: var(--red); }
+
+  /* EMA/RSI Config */
+  .config-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .config-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted2);
+  }
+
+  .config-item span { color: var(--text); font-weight: 600; }
+
+  .config-item input {
+    width: 60px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    direction: ltr;
+    text-align: center;
+    outline: none;
+  }
+
+  .config-item input:focus { border-color: var(--accent); }
+
+  /* Table */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    direction: ltr;
+  }
+
+  thead {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th {
+    padding: 12px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  thead th:first-child { text-align: left; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+  td {
+    padding: 14px 16px;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .td-symbol {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .td-price { color: var(--text); font-weight: 600; }
+
+  .td-ema { color: var(--muted2); }
+
+  .dist-positive { color: var(--green); font-weight: 600; }
+  .dist-negative { color: var(--red); font-weight: 600; }
+
+  /* RSI badge */
+  .rsi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .rsi-overbought {
+    background: rgba(255, 23, 68, 0.12);
+    border: 1px solid rgba(255, 23, 68, 0.3);
+    color: var(--red);
+  }
+
+  .rsi-oversold {
+    background: rgba(0, 230, 118, 0.12);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+    color: var(--green);
+  }
+
+  .rsi-neutral {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+  }
+
+  .rsi-warning-high {
+    background: rgba(255, 145, 0, 0.12);
+    border: 1px solid rgba(255, 145, 0, 0.3);
+    color: var(--orange);
+  }
+
+  .rsi-warning-low {
+    background: rgba(255, 214, 0, 0.12);
+    border: 1px solid rgba(255, 214, 0, 0.3);
+    color: var(--yellow);
+  }
+
+  /* Signal */
+  .signal {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Vazirmatn', sans-serif;
+  }
+
+  .signal-buy { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); color: var(--green); }
+  .signal-sell { background: rgba(255,23,68,0.1); border: 1px solid rgba(255,23,68,0.3); color: var(--red); }
+  .signal-none { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--muted2); }
+
+  /* Loading */
+  .loading-row td {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted2);
+    font-family: 'Vazirmatn', sans-serif;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Alert banner */
+  .alert-banner {
+    background: rgba(255,23,68,0.08);
+    border: 1px solid rgba(255,23,68,0.25);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #ff6b8a;
+    display: none;
+    font-family: 'Vazirmatn', sans-serif;
+    direction: rtl;
+  }
+
+  /* Error */
+  .error-cell { color: var(--red); font-size: 11px; font-family: 'Vazirmatn', sans-serif; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    main { padding: 12px; }
+    td, thead th { padding: 10px 10px; font-size: 11px; }
+    .td-symbol { font-size: 12px; }
+    .hide-mobile { display: none; }
+  }
 </style>
 </head>
 <body>
+
 <header>
-  <div class="avatar">🗣️</div>
-  <div class="header-info">
-    <h1>Alex — استاد انگلیسی شما</h1>
-    <p><span class="status-dot"></span>آنلاین و آماده</p>
+  <div class="logo">
+    <div class="logo-icon">📊</div>
+    <div>
+      <h1>داشبورد فیوچرز</h1>
+      <p>OKX Perpetual — EMA & RSI Monitor</p>
+    </div>
+  </div>
+  <div class="header-left">
+    <div class="countdown" id="countdown">⏱ 30s</div>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
   </div>
 </header>
 
-<div id="setup-screen">
-  <div class="setup-card">
-    <h2>بیا انگلیسی یاد بگیریم! 🚀</h2>
-    <p>من Alex هستم — هم معلم، هم دوست. باهات انگلیسی چت می‌کنم، اشتباهاتت رو مهربونانه تصحیح می‌کنم، و ترجمه فارسی هم می‌دم.</p>
+<main>
+  <!-- Alert -->
+  <div class="alert-banner" id="alert-banner"></div>
 
-    <div class="api-section">
-      <span class="field-label">🔑 کلید API اوپن‌روتر</span>
-      <input type="text" id="api-key" placeholder="sk-or-v1-..." autocomplete="off" />
-      <p class="api-note">🔒 کلیدت فقط توی مرورگر خودت ذخیره میشه — هیچکس نمی‌بینه.<br>رایگان از <strong>openrouter.ai</strong> بگیر</p>
+  <!-- Settings -->
+  <div class="settings-panel">
+    <div class="settings-title">⚙️ تنظیمات</div>
+
+    <div class="settings-row">
+      <div class="setting-group">
+        <label>نماد (مثال: SOLUSDT)</label>
+        <input type="text" id="symbol-input" placeholder="SOLUSDT" style="text-transform:uppercase" />
+      </div>
+      <button class="add-btn" onclick="addSymbol()">+ اضافه کردن</button>
     </div>
 
-    <span class="field-label">📊 سطح انگلیسی شما</span>
-    <div class="level-grid">
-      <button class="opt-btn active-level" data-level="beginner">🌱 مبتدی<br><small>تازه‌کار</small></button>
-      <button class="opt-btn" data-level="intermediate">📈 متوسط<br><small>یه کم بلدم</small></button>
-      <button class="opt-btn" data-level="advanced">🔥 پیشرفته<br><small>خوب بلدم</small></button>
-    </div>
+    <div class="symbols-list" id="symbols-list"></div>
 
-    <span class="field-label">💬 سبک مکالمه</span>
-    <div class="style-grid">
-      <button class="style-opt active-style" data-style="both"><span class="icon">⚡</span>معلم + دوست</button>
-      <button class="style-opt" data-style="teacher"><span class="icon">📚</span>معلم سخت‌گیر</button>
-      <button class="style-opt" data-style="friend"><span class="icon">😊</span>دوست صمیمی</button>
-      <button class="style-opt" data-style="travel"><span class="icon">✈️</span>سفر و گردشگری</button>
+    <div class="config-row">
+      <div class="config-item">
+        <span>EMA دوره:</span>
+        <input type="number" id="ema-period" value="9" min="1" max="200" onchange="refreshAll()" />
+      </div>
+      <div class="config-item">
+        <span>EMA تایم‌فریم:</span>
+        <select id="ema-tf" onchange="refreshAll()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;outline:none;direction:ltr;">
+          <option value="1H" selected>1H</option>
+          <option value="4H">4H</option>
+          <option value="1D">1D</option>
+          <option value="15m">15m</option>
+          <option value="30m">30m</option>
+        </select>
+      </div>
+      <div class="config-item">
+        <span>RSI اشباع خرید:</span>
+        <input type="number" id="rsi-ob" value="80" min="50" max="99" onchange="refreshAll()" />
+      </div>
+      <div class="config-item">
+        <span>RSI اشباع فروش:</span>
+        <input type="number" id="rsi-os" value="20" min="1" max="49" onchange="refreshAll()" />
+      </div>
+      <div class="config-item">
+        <span>چارت تایم‌فریم:</span>
+        <select id="chart-tf" onchange="refreshAll()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;outline:none;direction:ltr;">
+          <option value="5m" selected>5m</option>
+          <option value="15m">15m</option>
+          <option value="1H">1H</option>
+        </select>
+      </div>
     </div>
-
-    <button class="start-btn" onclick="startChat()">شروع چت ←</button>
   </div>
-</div>
 
-<div id="chat-screen">
-  <div id="messages"></div>
-  <div class="hints" id="hints"></div>
-  <div id="input-area">
-    <textarea id="user-input" placeholder="Write in English..." rows="1"></textarea>
-    <button id="send-btn" onclick="sendMessage()">➤</button>
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>نماد</th>
+          <th>قیمت فعلی</th>
+          <th>EMA (<span id="th-ema">9</span> • <span id="th-tf">1H</span>)</th>
+          <th>فاصله از EMA</th>
+          <th>RSI (5m)</th>
+          <th>سیگنال</th>
+          <th>آپدیت</th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <tr class="loading-row">
+          <td colspan="7">ابتدا یک نماد اضافه کنید <span class="spinner"></span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div>
+</main>
 
 <script>
-let apiKey = '', level = 'beginner', style = 'both', history = [];
+// State
+let symbols = JSON.parse(localStorage.getItem('crypto-symbols') || '["BTCUSDT","ETHUSDT","SOLUSDT","BNBUSDT","XRPUSDT"]');
+let intervalId = null;
+let countdown = 30;
+let countdownId = null;
 
-document.querySelectorAll('.opt-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active-level'));
-    btn.classList.add('active-level');
-    level = btn.dataset.level;
-  });
-});
-
-document.querySelectorAll('.style-opt').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.style-opt').forEach(b => b.classList.remove('active-style'));
-    btn.classList.add('active-style');
-    style = btn.dataset.style;
-  });
-});
-
-const textarea = document.getElementById('user-input');
-textarea.addEventListener('input', () => {
-  textarea.style.height = 'auto';
-  textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-});
-textarea.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-});
-
-function getSystemPrompt() {
-  const levelMap = {
-    beginner: 'BEGINNER: Use only very simple words and short sentences. Always explain new words.',
-    intermediate: 'INTERMEDIATE: Use natural language. Introduce some idioms with brief explanations.',
-    advanced: 'ADVANCED: Speak fully naturally with idioms and rich vocabulary.'
-  };
-  const styleMap = {
-    both: 'You are Alex, a friendly English teacher and conversational partner.',
-    teacher: 'You are Alex, a careful English teacher. Correct every mistake and explain why.',
-    friend: 'You are Alex, a casual fun English-speaking friend.',
-    travel: 'You are Alex, an English partner focused on travel and daily life abroad.'
-  };
-  return `${styleMap[style]} ${levelMap[level]}
-
-CRITICAL: Respond with valid JSON only. No markdown, no extra text.
-{"english":"your reply","persian":"ترجمه فارسی","correction":"توضیح اشتباه به فارسی یا رشته خالی","hint":"جمله پیشنهادی انگلیسی کوتاه"}
-
-- english: warm, encouraging, 2-3 sentences, end with a question
-- persian: accurate Persian translation of english
-- correction: Persian explanation if grammar mistake exists, empty string if no mistake
-- hint: short English sentence they could say next`;
+// OKX instId converter
+function toOKXInstId(symbol) {
+  // SOLUSDT -> SOL-USDT-SWAP
+  const base = symbol.replace('USDT', '');
+  return `${base}-USDT-SWAP`;
 }
 
-function startChat() {
-  apiKey = document.getElementById('api-key').value.trim();
-  if (!apiKey) { showToast('لطفاً کلید API رو وارد کن!'); return; }
-  if (!apiKey.startsWith('sk-or-')) { showToast('کلید باید با sk-or- شروع بشه'); return; }
-
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('chat-screen').style.display = 'flex';
-
-  const welcomes = {
-    both: {e:"Hey! I'm Alex! 👋 Don't worry about mistakes — everyone starts somewhere! Let's have fun learning together. Can you tell me your name?", p:"سلام! من الکس هستم! 👋 نگران اشتباه نباش — همه از جایی شروع می‌کنن! بیا با هم یاد بگیریم. میتونی اسمت رو بگی؟", h:"My name is ..."},
-    teacher: {e:"Hello! I'm Alex, your English teacher. 📚 Don't be afraid of mistakes — that's how we learn! What is your name?", p:"سلام! من الکس، معلم انگلیسیتم. 📚 از اشتباه نترس — اینطوری یاد میگیریم! اسمت چیه؟", h:"My name is ..."},
-    friend: {e:"Hey!! 😄 I'm Alex! Zero pressure — just two friends chatting in English. What's up?", p:"هی!! 😄 من الکسم! هیچ فشاری نیست — فقط دو دوست دارن انگلیسی چت می‌کنن. چطوری؟", h:"I am from Iran"},
-    travel: {e:"Hello traveler! ✈️ I'm Alex! Imagine you're at London airport. Say: 'Hello, excuse me!' to ask for help!", p:"سلام مسافر! ✈️ تصور کن توی فرودگاه لندنی. بگو: 'Hello, excuse me!' تا کمک بخوای!", h:"Hello, excuse me!"}
-  };
-
-  const w = welcomes[style];
-  addAiMessage(w.e, w.p, '');
-  showHints(w.h);
+// OKX timeframe converter
+function toOKXBar(tf) {
+  const map = { '1m':'1m','5m':'5m','15m':'15m','30m':'30m','1H':'1H','4H':'4H','1D':'1D' };
+  return map[tf] || tf;
 }
 
-function showHints(hint) {
-  const defaults = {
-    beginner: ['Hello!', 'My name is ...', 'I like ...', 'I am from Iran'],
-    intermediate: ['Can you help me?', 'I was thinking...', 'What do you think?', 'Tell me more'],
-    advanced: ["I'd argue that...", 'From my perspective...', 'Could you elaborate?', "That's interesting"]
-  };
-  const hintContainer = document.getElementById('hints');
-  hintContainer.innerHTML = '';
-  const chips = hint ? [hint, ...defaults[level].slice(0,3)] : defaults[level];
-  chips.forEach(text => {
-    const chip = document.createElement('button');
-    chip.className = 'hint-chip';
-    chip.textContent = text;
-    chip.onclick = () => { textarea.value = text; textarea.focus(); };
-    hintContainer.appendChild(chip);
-  });
+// Fetch OHLCV from OKX
+async function fetchCandles(instId, bar, limit=100) {
+  const url = `https://www.okx.com/api/v5/market/candles?instId=${instId}&bar=${bar}&limit=${limit}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('OKX API error');
+  const data = await res.json();
+  if (data.code !== '0') throw new Error(data.msg || 'OKX error');
+  // Returns: [ts, open, high, low, close, vol, volCcy, volCcyQuote, confirm]
+  return data.data.reverse(); // oldest first
 }
 
-async function sendMessage() {
-  const input = textarea.value.trim();
-  if (!input) return;
-  const btn = document.getElementById('send-btn');
-  btn.disabled = true;
-  textarea.value = '';
-  textarea.style.height = 'auto';
+// Fetch ticker (current price)
+async function fetchTicker(instId) {
+  const url = `https://www.okx.com/api/v5/market/ticker?instId=${instId}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.code !== '0') throw new Error(data.msg);
+  return parseFloat(data.data[0].last);
+}
 
-  addUserMessage(input);
-  history.push({ role: 'user', content: input });
+// Calculate EMA
+function calcEMA(closes, period) {
+  if (closes.length < period) return null;
+  const k = 2 / (period + 1);
+  let ema = closes.slice(0, period).reduce((a,b) => a+b, 0) / period;
+  for (let i = period; i < closes.length; i++) {
+    ema = closes[i] * k + ema * (1 - k);
+  }
+  return ema;
+}
 
-  const typingEl = addTyping();
+// Calculate RSI
+function calcRSI(closes, period=14) {
+  if (closes.length < period + 1) return null;
+  let gains = 0, losses = 0;
+  for (let i = closes.length - period; i < closes.length; i++) {
+    const diff = closes[i] - closes[i-1];
+    if (diff > 0) gains += diff;
+    else losses += Math.abs(diff);
+  }
+  const avgGain = gains / period;
+  const avgLoss = losses / period;
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - (100 / (1 + rs));
+}
+
+// Fetch all data for one symbol
+async function fetchSymbolData(symbol) {
+  const instId = toOKXInstId(symbol);
+  const emaTF = toOKXBar(document.getElementById('ema-tf').value);
+  const chartTF = toOKXBar(document.getElementById('chart-tf').value);
+  const emaPeriod = parseInt(document.getElementById('ema-period').value) || 9;
+
+  const [emaCandles, rsiCandles, price] = await Promise.all([
+    fetchCandles(instId, emaTF, Math.max(emaPeriod * 3, 100)),
+    fetchCandles(instId, chartTF, 50),
+    fetchTicker(instId)
+  ]);
+
+  const emaCloses = emaCandles.map(c => parseFloat(c[4]));
+  const rsiCloses = rsiCandles.map(c => parseFloat(c[4]));
+
+  const ema = calcEMA(emaCloses, emaPeriod);
+  const rsi = calcRSI(rsiCloses, 14);
+
+  return { price, ema, rsi };
+}
+
+// Render table
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  if (symbols.length === 0) {
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="7">هیچ نمادی اضافه نشده — یک نماد اضافه کنید</td></tr>';
+    return;
+  }
+  tbody.innerHTML = symbols.map(s => `
+    <tr id="row-${s}">
+      <td class="td-symbol">${s}</td>
+      <td colspan="6" class="loading-row" style="color:var(--muted2);font-family:'Vazirmatn',sans-serif;">
+        <span class="spinner"></span> در حال بارگذاری...
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Update one row
+async function updateRow(symbol) {
+  const row = document.getElementById(`row-${symbol}`);
+  if (!row) return;
 
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': window.location.href,
-        'X-Title': 'English Learning Chat'
-      },
-      body: JSON.stringify({
-        model: 'meta-llama/llama-3.1-8b-instruct:free',
-        messages: [
-          { role: 'system', content: getSystemPrompt() },
-          ...history
-        ],
-        max_tokens: 600,
-        temperature: 0.7
-      })
-    });
+    const { price, ema, rsi } = await fetchSymbolData(symbol);
+    const emaPeriod = document.getElementById('ema-period').value;
+    const emaTF = document.getElementById('ema-tf').value;
+    const rsiOB = parseFloat(document.getElementById('rsi-ob').value) || 80;
+    const rsiOS = parseFloat(document.getElementById('rsi-os').value) || 20;
+    const chartTF = document.getElementById('chart-tf').value;
 
-    typingEl.remove();
+    const distPct = ema ? ((price - ema) / ema * 100) : null;
+    const distClass = distPct >= 0 ? 'dist-positive' : 'dist-negative';
+    const distSign = distPct >= 0 ? '+' : '';
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error?.message || 'خطای API');
+    // RSI class
+    let rsiClass = 'rsi-neutral', rsiLabel = '';
+    if (rsi !== null) {
+      if (rsi >= rsiOB) { rsiClass = 'rsi-overbought'; rsiLabel = '🔴 اشباع خرید'; }
+      else if (rsi <= rsiOS) { rsiClass = 'rsi-oversold'; rsiLabel = '🟢 اشباع فروش'; }
+      else if (rsi >= rsiOB - 5) { rsiClass = 'rsi-warning-high'; rsiLabel = '⚠️ نزدیک اشباع'; }
+      else if (rsi <= rsiOS + 5) { rsiClass = 'rsi-warning-low'; rsiLabel = '⚠️ نزدیک اشباع'; }
+      else rsiLabel = '—';
     }
 
-    const data = await response.json();
-    let raw = data.choices?.[0]?.message?.content || '';
-    raw = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    // Signal
+    let signalHTML = '<span class="signal signal-none">—</span>';
+    if (rsi !== null && ema !== null) {
+      if (rsi >= rsiOB) signalHTML = '<span class="signal signal-sell">🔴 فروش</span>';
+      else if (rsi <= rsiOS) signalHTML = '<span class="signal signal-buy">🟢 خرید</span>';
+    }
 
-    let parsed;
-    try { parsed = JSON.parse(raw); }
-    catch(e) { parsed = { english: raw, persian: '', correction: '', hint: '' }; }
+    const now = new Date().toLocaleTimeString('fa-IR');
 
-    history.push({ role: 'assistant', content: parsed.english });
-    addAiMessage(parsed.english, parsed.persian || '', parsed.correction || '');
-    if (parsed.hint) showHints(parsed.hint);
+    row.innerHTML = `
+      <td class="td-symbol">${symbol}</td>
+      <td class="td-price">$${price.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:4})}</td>
+      <td class="td-ema">${ema ? '$' + ema.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:4}) : '—'}</td>
+      <td class="${distClass}">${distPct !== null ? distSign + distPct.toFixed(2) + '%' : '—'}</td>
+      <td><span class="rsi-badge ${rsiClass}">${rsi !== null ? rsi.toFixed(1) : '—'} ${rsiLabel}</span></td>
+      <td>${signalHTML}</td>
+      <td style="color:var(--muted2);font-size:11px;">${now}</td>
+    `;
 
-  } catch (err) {
-    typingEl.remove();
-    showToast('خطا: ' + err.message);
+    // Show alert if RSI signal
+    if (rsi !== null && (rsi >= rsiOB || rsi <= rsiOS)) {
+      showAlert(symbol, rsi, rsiOB, rsiOS);
+    }
+
+  } catch(err) {
+    row.innerHTML = `
+      <td class="td-symbol">${symbol}</td>
+      <td colspan="6" class="error-cell">⚠️ خطا در دریافت داده — ${err.message}</td>
+    `;
   }
-
-  btn.disabled = false;
-  textarea.focus();
 }
 
-function addUserMessage(text) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg user';
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  div.innerHTML = `<div class="msg-avatar">😊</div><div class="msg-content"><div class="bubble">${escHtml(text)}</div><span class="msg-time">${time}</span></div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+let alerts = {};
+function showAlert(symbol, rsi, ob, os) {
+  const key = symbol + (rsi >= ob ? '_ob' : '_os');
+  if (alerts[key]) return;
+  alerts[key] = true;
+  setTimeout(() => delete alerts[key], 120000);
+
+  const banner = document.getElementById('alert-banner');
+  const type = rsi >= ob ? `اشباع خرید (${rsi.toFixed(1)})` : `اشباع فروش (${rsi.toFixed(1)})`;
+  banner.style.display = 'block';
+  banner.innerHTML = `🚨 <strong>${symbol}</strong> — RSI به منطقه ${type} رسید!`;
+  setTimeout(() => { banner.style.display = 'none'; }, 10000);
 }
 
-function addAiMessage(english, persian, correction) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg ai';
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  let transHTML = persian ? `<div class="translation">${escHtml(persian)}</div>` : '';
-  let corrHTML = correction ? `<div class="correction">✏️ ${escHtml(correction)}</div>` : '';
-  div.innerHTML = `<div class="msg-avatar">🗣️</div><div class="msg-content"><div class="bubble">${escHtml(english)}</div>${transHTML}${corrHTML}<span class="msg-time">${time}</span></div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
+async function refreshAll() {
+  document.getElementById('th-ema').textContent = document.getElementById('ema-period').value;
+  document.getElementById('th-tf').textContent = document.getElementById('ema-tf').value;
+  renderTable();
+  for (const s of symbols) {
+    await updateRow(s);
+  }
 }
 
-function addTyping() {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg ai';
-  div.innerHTML = `<div class="msg-avatar">🗣️</div><div class="msg-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
+function addSymbol() {
+  const input = document.getElementById('symbol-input');
+  let val = input.value.trim().toUpperCase();
+  if (!val) return;
+  if (!val.endsWith('USDT')) val += 'USDT';
+  if (symbols.includes(val)) { input.value = ''; return; }
+  symbols.push(val);
+  saveSymbols();
+  input.value = '';
+  renderTable();
+  updateRow(val);
+  renderTags();
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function removeSymbol(symbol) {
+  symbols = symbols.filter(s => s !== symbol);
+  saveSymbols();
+  renderTags();
+  renderTable();
 }
 
-function showToast(msg) {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 4000);
+function saveSymbols() {
+  localStorage.setItem('crypto-symbols', JSON.stringify(symbols));
 }
+
+function renderTags() {
+  const list = document.getElementById('symbols-list');
+  list.innerHTML = symbols.map(s => `
+    <div class="symbol-tag">
+      ${s}
+      <button onclick="removeSymbol('${s}')" title="حذف">×</button>
+    </div>
+  `).join('');
+}
+
+function startCountdown() {
+  countdown = 30;
+  clearInterval(countdownId);
+  countdownId = setInterval(() => {
+    countdown--;
+    document.getElementById('countdown').textContent = `⏱ ${countdown}s`;
+    if (countdown <= 0) {
+      countdown = 30;
+      refreshAll();
+    }
+  }, 1000);
+}
+
+// Symbol input enter key
+document.getElementById('symbol-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addSymbol();
+});
+
+// Init
+renderTags();
+renderTable();
+if (symbols.length > 0) refreshAll();
+startCountdown();
+clearInterval(intervalId);
+intervalId = setInterval(refreshAll, 30000);
 </script>
 </body>
 </html>
