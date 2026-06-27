@@ -70,7 +70,6 @@
     50% { opacity: 0.4; }
   }
 
-  /* Setup */
   #setup-screen {
     flex: 1;
     display: flex;
@@ -141,6 +140,8 @@
     line-height: 1.6;
   }
 
+  .api-note a { color: var(--accent); text-decoration: none; }
+
   .level-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -163,7 +164,7 @@
     line-height: 1.5;
   }
 
-  .opt-btn.active-level, .opt-btn:hover {
+  .opt-btn.active-level {
     border-color: var(--accent);
     color: var(--accent);
     background: rgba(108,143,255,0.08);
@@ -193,7 +194,7 @@
 
   .style-opt .icon { font-size: 18px; display: block; margin-bottom: 4px; }
 
-  .style-opt.active-style, .style-opt:hover {
+  .style-opt.active-style {
     border-color: var(--accent2);
     color: var(--accent2);
     background: rgba(167,139,250,0.08);
@@ -216,7 +217,6 @@
   .start-btn:hover { opacity: 0.9; }
   .start-btn:active { transform: scale(0.98); }
 
-  /* Chat */
   #chat-screen {
     flex: 1;
     display: none;
@@ -249,7 +249,6 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* AI messages: right-to-left (RTL layout, AI on right) */
   .msg.ai { align-self: flex-start; direction: ltr; }
   .msg.user { align-self: flex-end; flex-direction: row-reverse; direction: ltr; }
 
@@ -287,7 +286,6 @@
     border-top-right-radius: 4px;
   }
 
-  /* Persian translation bubble */
   .translation {
     background: rgba(108,143,255,0.07);
     border: 1px solid rgba(108,143,255,0.2);
@@ -307,7 +305,6 @@
     color: var(--accent);
   }
 
-  /* Correction */
   .correction {
     background: rgba(255,107,107,0.07);
     border: 1px solid rgba(255,107,107,0.2);
@@ -328,7 +325,6 @@
     font-family: 'Inter', sans-serif;
   }
 
-  /* Typing */
   .typing-indicator {
     display: flex;
     gap: 4px;
@@ -355,7 +351,6 @@
     30% { transform: translateY(-6px); }
   }
 
-  /* Hints */
   .hints {
     display: flex;
     gap: 6px;
@@ -375,12 +370,10 @@
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
-    direction: ltr;
   }
 
   .hint-chip:hover { border-color: var(--accent); color: var(--accent); }
 
-  /* Input */
   #input-area {
     padding: 10px 14px 14px;
     background: var(--surface);
@@ -458,16 +451,16 @@
   </div>
 </header>
 
-<!-- Setup -->
 <div id="setup-screen">
   <div class="setup-card">
     <h2>بیا انگلیسی یاد بگیریم! 🚀</h2>
     <p>من Alex هستم — هم معلم، هم دوست. باهات انگلیسی چت می‌کنم، اشتباهاتت رو مهربونانه تصحیح می‌کنم، و ترجمه فارسی هم می‌دم تا گم نشی.</p>
 
     <div class="api-section">
-      <span class="field-label">🔑 کلید API انتروپیک</span>
-      <input type="text" id="api-key" placeholder="sk-ant-api03-..." autocomplete="off" />
-      <p class="api-note">🔒 کلیدت فقط توی مرورگر خودت ذخیره میشه. رایگان از <strong>console.anthropic.com</strong> بگیر</p>
+      <span class="field-label">🔑 کلید API گوگل Gemini</span>
+      <input type="text" id="api-key" placeholder="AIza..." autocomplete="off" />
+      <p class="api-note">🔒 کلیدت فقط توی مرورگر خودت ذخیره میشه — هیچکس نمی‌بینه.<br>
+      رایگان از <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a> بگیر (با Gmail لاگین کن ← Get API Key)</p>
     </div>
 
     <span class="field-label">📊 سطح انگلیسی شما</span>
@@ -480,28 +473,23 @@
     <span class="field-label">💬 سبک مکالمه</span>
     <div class="style-grid">
       <button class="style-opt active-style" data-style="both">
-        <span class="icon">⚡</span>
-        معلم + دوست
+        <span class="icon">⚡</span>معلم + دوست
       </button>
       <button class="style-opt" data-style="teacher">
-        <span class="icon">📚</span>
-        معلم سخت‌گیر
+        <span class="icon">📚</span>معلم سخت‌گیر
       </button>
       <button class="style-opt" data-style="friend">
-        <span class="icon">😊</span>
-        دوست صمیمی
+        <span class="icon">😊</span>دوست صمیمی
       </button>
       <button class="style-opt" data-style="travel">
-        <span class="icon">✈️</span>
-        سفر و گردشگری
+        <span class="icon">✈️</span>سفر و گردشگری
       </button>
     </div>
 
-    <button class="start-btn" onclick="startChat()">شروع چت ← </button>
+    <button class="start-btn" onclick="startChat()">شروع چت ←</button>
   </div>
 </div>
 
-<!-- Chat -->
 <div id="chat-screen">
   <div id="messages"></div>
   <div class="hints" id="hints"></div>
@@ -544,53 +532,47 @@ textarea.addEventListener('keydown', e => {
 
 function getSystemPrompt() {
   const levelMap = {
-    beginner: 'BEGINNER: Use only very simple words and short sentences (max 10 words per sentence). Always explain new vocabulary.',
-    intermediate: 'INTERMEDIATE: Use natural language. Introduce some idioms and phrasal verbs with brief explanations.',
-    advanced: 'ADVANCED: Speak fully naturally with idioms, complex grammar, and rich vocabulary.'
+    beginner: 'BEGINNER level: Use only very simple words and very short sentences. Always explain new words.',
+    intermediate: 'INTERMEDIATE level: Use natural language. Introduce some idioms with brief explanations.',
+    advanced: 'ADVANCED level: Speak fully naturally with idioms, complex grammar, and rich vocabulary.'
   };
-
   const styleMap = {
     both: 'You are Alex, a friendly English teacher and conversational partner.',
-    teacher: 'You are Alex, a careful and thorough English teacher. Correct every mistake and explain why.',
-    friend: 'You are Alex, a casual and fun English-speaking friend. Be relaxed and only correct confusing mistakes.',
-    travel: 'You are Alex, an English conversation partner focused on travel, tourism, and daily life situations abroad.'
+    teacher: 'You are Alex, a careful English teacher. Correct every mistake and explain why.',
+    friend: 'You are Alex, a casual fun English-speaking friend. Only correct confusing mistakes.',
+    travel: 'You are Alex, an English partner focused on travel and daily life situations abroad.'
   };
 
   return `${styleMap[style]} ${levelMap[level]}
 
-Your response must ALWAYS follow this exact JSON format (respond with JSON only, no extra text):
-{
-  "english": "Your English reply here (natural conversation)",
-  "persian_translation": "ترجمه فارسی پیام انگلیسی بالا اینجا",
-  "correction": "اگه اشتباهی بود اینجا فارسی توضیح بده. مثلا: «I goes» اشتباهه، درستش «I go» هست چون با I از فعل بدون s استفاده میشه. اگه اشتباهی نبود این رو خالی بذار: \"\"",
-  "hint": "یه جمله انگلیسی کوتاه پیشنهاد بده که کاربر میتونه بعدی بگه"
-}
+CRITICAL: You MUST respond with valid JSON only. No markdown, no extra text, just JSON.
+Format:
+{"english":"your English reply here","persian":"ترجمه فارسی اینجا","correction":"اگه اشتباه گرامری بود فارسی توضیح بده وگرنه رشته خالی","hint":"یک جمله انگلیسی کوتاه پیشنهادی برای پیام بعدی"}
 
 Rules:
-- english: Always in English, warm and encouraging, end with a question to keep conversation going
-- persian_translation: Accurate Persian translation of the english field
-- correction: In Persian, only if there's a real grammar/vocabulary mistake. Empty string if no mistakes.
-- hint: A short example English sentence the user could say next (in English)
-- NEVER break JSON format`;
+- english: warm, encouraging, end with a question, 2-3 sentences max
+- persian: accurate Persian translation of the english field
+- correction: Persian explanation of grammar mistake only if there is one, empty string otherwise
+- hint: short example English sentence they could say next`;
 }
 
 function startChat() {
   apiKey = document.getElementById('api-key').value.trim();
   if (!apiKey) { showToast('لطفاً کلید API رو وارد کن!'); return; }
-  if (!apiKey.startsWith('sk-ant-')) { showToast('کلید باید با sk-ant- شروع بشه'); return; }
+  if (!apiKey.startsWith('AIza')) { showToast('کلید Gemini باید با AIza شروع بشه'); return; }
 
   document.getElementById('setup-screen').style.display = 'none';
   document.getElementById('chat-screen').style.display = 'flex';
 
   const welcomes = {
-    both: { english: "Hey! I'm Alex! 👋 I'm so happy to meet you! Don't worry about making mistakes — everyone starts somewhere, and you're already brave for trying! Let's have fun learning together. Can you tell me your name?", persian_translation: "سلام! من الکس هستم! 👋 خیلی خوشحالم که میبینمت! نگران اشتباه کردن نباش — همه از جایی شروع می‌کنن، و تو قبلاً شجاعانه داری امتحان می‌کنی! بیا با هم یاد بگیریم. میتونی اسمت رو بگی؟", correction: "", hint: "My name is ..." },
-    teacher: { english: "Hello! Welcome to our English lesson! 📚 I'm Alex, your teacher. We will practice English together every day. Don't be afraid — mistakes help us learn! What is your name?", persian_translation: "سلام! به کلاس انگلیسی خوش اومدی! 📚 من الکس، معلمتم. هر روز باهم انگلیسی تمرین می‌کنیم. نترس — اشتباهات کمک می‌کنن یاد بگیریم! اسمت چیه؟", correction: "", hint: "My name is ..." },
-    friend: { english: "Hey hey!! 😄 I'm Alex! Super excited to be your English buddy! We're just gonna chat like normal friends — zero pressure, zero stress. What's up? Tell me about yourself!", persian_translation: "هی هی!! 😄 من الکسم! خیلی هیجان‌زده‌ام که دوست انگلیسیت باشم! مثل دوستای معمولی چت می‌کنیم — هیچ فشاری نیست. چطوری؟ از خودت بگو!", correction: "", hint: "I am from Iran and I like ..." },
-    travel: { english: "Hello, traveler! ✈️ I'm Alex! Imagine you're at an airport in London. You need to find your gate! Are you ready for this adventure? Let's start: Can you say 'Hello, excuse me' to ask for help?", persian_translation: "سلام مسافر! ✈️ من الکسم! تصور کن توی فرودگاه لندن هستی. باید گیتت رو پیدا کنی! آماده‌ای برای این ماجرا؟ بریم شروع کنیم: میتونی بگی «Hello, excuse me» تا کمک بخوای؟", correction: "", hint: "Hello, excuse me!" }
+    both: {english:"Hey! I'm Alex! 👋 I'm so happy to meet you! Don't worry about mistakes — everyone starts somewhere! Let's have fun learning together. Can you tell me your name?", persian:"سلام! من الکس هستم! 👋 خیلی خوشحالم که میبینمت! نگران اشتباه نباش — همه از جایی شروع می‌کنن! بیا با هم یاد بگیریم. میتونی اسمت رو بگی؟", correction:"", hint:"My name is ..."},
+    teacher: {english:"Hello! Welcome to our English lesson! 📚 I'm Alex, your teacher. Don't be afraid of mistakes — that's how we learn! What is your name?", persian:"سلام! به کلاس انگلیسی خوش اومدی! 📚 من الکس، معلمتم. از اشتباه نترس — اینطوری یاد میگیریم! اسمت چیه؟", correction:"", hint:"My name is ..."},
+    friend: {english:"Hey!! 😄 I'm Alex! Zero pressure, zero stress — just two friends chatting. What's up? Tell me about yourself!", persian:"هی!! 😄 من الکسم! هیچ فشاری نیست — فقط دو تا دوست دارن چت می‌کنن. چطوری؟ از خودت بگو!", correction:"", hint:"I am from Iran and I like ..."},
+    travel: {english:"Hello traveler! ✈️ I'm Alex! Imagine you're at an airport in London. Are you ready? Say: 'Hello, excuse me!' to ask for help!", persian:"سلام مسافر! ✈️ من الکسم! تصور کن توی فرودگاه لندنی. آماده‌ای؟ بگو: 'Hello, excuse me!' تا کمک بخوای!", correction:"", hint:"Hello, excuse me!"}
   };
 
   const w = welcomes[style];
-  addMessage('ai', w.english, w.persian_translation, '');
+  addAiMessage(w.english, w.persian, '');
   showHints(w.hint);
 }
 
@@ -598,12 +580,10 @@ function showHints(hint) {
   const defaults = {
     beginner: ['Hello!', 'My name is ...', 'I like ...', 'I am from Iran'],
     intermediate: ['Can you help me?', 'I was thinking...', 'What do you think?', 'Tell me more'],
-    advanced: ['I\'d argue that...', 'From my perspective...', 'Could you elaborate?', 'That\'s interesting']
+    advanced: ["I'd argue that...", 'From my perspective...', 'Could you elaborate?', "That's interesting"]
   };
-
   const hintContainer = document.getElementById('hints');
   hintContainer.innerHTML = '';
-
   const chips = hint ? [hint, ...defaults[level].slice(0,3)] : defaults[level];
   chips.forEach(text => {
     const chip = document.createElement('button');
@@ -624,26 +604,39 @@ async function sendMessage() {
   textarea.style.height = 'auto';
 
   addUserMessage(input);
-  history.push({ role: 'user', content: input });
+  history.push({ role: 'user', parts: [{ text: input }] });
 
   const typingEl = addTyping();
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 800,
-        system: getSystemPrompt(),
-        messages: history
-      })
-    });
+    const systemPrompt = getSystemPrompt();
+    const contents = [
+      { role: 'user', parts: [{ text: systemPrompt + '\n\nUser says: ' + input }] },
+      ...history.slice(1).map((m, i) => ({
+        role: m.role,
+        parts: m.parts
+      }))
+    ];
+
+    // Build proper contents with system as first user message
+    const requestContents = [];
+    // Add all history
+    for (let i = 0; i < history.length; i++) {
+      requestContents.push(history[i]);
+    }
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
+          contents: history,
+          generationConfig: { temperature: 0.7, maxOutputTokens: 600 }
+        })
+      }
+    );
 
     typingEl.remove();
 
@@ -653,20 +646,18 @@ async function sendMessage() {
     }
 
     const data = await response.json();
-    let raw = data.content[0].text.trim();
-
-    // strip markdown code fences if present
+    let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     raw = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
 
     let parsed;
     try {
       parsed = JSON.parse(raw);
     } catch(e) {
-      parsed = { english: raw, persian_translation: '', correction: '', hint: '' };
+      parsed = { english: raw, persian: '', correction: '', hint: '' };
     }
 
-    history.push({ role: 'assistant', content: parsed.english });
-    addMessage('ai', parsed.english, parsed.persian_translation, parsed.correction);
+    history.push({ role: 'model', parts: [{ text: parsed.english }] });
+    addAiMessage(parsed.english, parsed.persian || '', parsed.correction || '');
     if (parsed.hint) showHints(parsed.hint);
 
   } catch (err) {
@@ -693,21 +684,14 @@ function addUserMessage(text) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-function addMessage(role, english, persian, correction) {
+function addAiMessage(english, persian, correction) {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
-  div.className = `msg ${role}`;
+  div.className = 'msg ai';
   const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  let corrHTML = '';
-  if (correction && correction.trim()) {
-    corrHTML = `<div class="correction">✏️ ${escHtml(correction)}</div>`;
-  }
-
-  let transHTML = '';
-  if (persian && persian.trim()) {
-    transHTML = `<div class="translation">${escHtml(persian)}</div>`;
-  }
+  let transHTML = persian ? `<div class="translation">${escHtml(persian)}</div>` : '';
+  let corrHTML = correction ? `<div class="correction">✏️ ${escHtml(correction)}</div>` : '';
 
   div.innerHTML = `
     <div class="msg-avatar">🗣️</div>
@@ -736,7 +720,11 @@ function addTyping() {
 }
 
 function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
 }
 
 function showToast(msg) {
@@ -751,3 +739,4 @@ function showToast(msg) {
 </script>
 </body>
 </html>
+ 
